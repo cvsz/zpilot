@@ -296,8 +296,10 @@ def wait_for_merge_gates(root: Path,repo: str,number: int,head: str,base: str,wa
         if hard_fail:
             names=", ".join(str(item.get("name","unknown")) for item in hard_fail)
             raise RuntimeError("GitHub checks failed: "+names)
-        checks_ready=bool(checks) and all(item.get("bucket") in ("pass","skipping") for item in checks)
-        last_checks="passed" if checks_ready else "pending or awaiting independent approval"
+        independent=[item for item in checks if item.get("name")=="verify-independent-approval"]
+        independent_ready=len(independent)==1 and independent[0].get("bucket")=="pass"
+        checks_ready=bool(checks) and independent_ready and all(item.get("bucket") in ("pass","skipping") for item in checks)
+        last_checks="all checks and independent approval passed" if checks_ready else "pending or awaiting exact-head independent approval"
         mergeable=pr.get("mergeable")
         if review=="APPROVED" and checks_ready and mergeable in (True,"MERGEABLE"):
             return pr

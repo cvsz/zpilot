@@ -1,189 +1,117 @@
-# zTemplate
+# ZPilot — Autonomous Repository Engineering Orchestrator
 
-A reusable, security-oriented GitHub project starting point with governance, engineering guidance, CI, AI-agent operating rules, repository validation, and an automated GitHub administration gate.
+[![CI](https://github.com/cvsz/zpilot/actions/workflows/ci.yml/badge.svg)](https://github.com/cvsz/zpilot/actions/workflows/ci.yml) [![CodeQL](https://github.com/cvsz/zpilot/actions/workflows/codeql.yml/badge.svg)](https://github.com/cvsz/zpilot/actions/workflows/codeql.yml) [![Secret Scan](https://github.com/cvsz/zpilot/actions/workflows/secret-scan.yml/badge.svg)](https://github.com/cvsz/zpilot/actions/workflows/secret-scan.yml)
 
-This repository is a **template foundation**, not a deployable application. A repository generated from it still requires stack-specific implementation, deployment, recovery, observability, and security evidence before that application can be called production ready.
+ZPilot is the cross-platform engineering control plane for understanding, validating, repairing, and delivering changes to software repositories through bounded, evidence-driven automation.
 
-## Create a new project
+## Mission
 
-1. Click **Use this template** on GitHub and clone the generated repository.
-2. Preview project initialization:
+ZPilot coordinates a controlled engineering lifecycle:
 
-   ```bash
-   python3 scripts/bootstrap.py --name my-service --owner my-org --codeowner my-org/maintainers --description 'New service'
-   ```
+1. **Discover** repository root, branch/head, working-tree state, instructions, nested projects, manifests, lockfiles, CI workflows, toolchains, and platform.
+2. **Understand** ZeaZDev and repository-specific operating rules before delegating work.
+3. **Plan** validation adapters from discovered manifests and existing project scripts.
+4. **Implement** inside a dedicated Git worktree isolated from the operator's checkout.
+5. **Converge** through bounded repair/validation rounds, timeouts, and no-progress detection.
+6. **Self-heal** by passing exact failed checks to a coding agent and independently rerunning validation.
+7. **Complete** only after tests, diff hygiene, and secret scanning pass.
+8. **Deliver** through a feature branch and pull request, exact-head CI, and independent review.
+9. **Synchronize** the local base branch using fast-forward only after GitHub confirms the remote merge.
 
-3. Apply explicitly, inspect the diff, and review ownership/security files:
+The product-level **both** merge mode means remote pull-request merge plus local fast-forward synchronization. The GitHub merge strategy is selected separately: merge, squash, or rebase.
 
-   ```bash
-   python3 scripts/bootstrap.py --name my-service --owner my-org --codeowner my-org/maintainers --description 'New service' --apply
-   make validate-template
-   ```
+## Product boundaries
 
-4. Select an optional [project profile](docs/profiles.md), replace placeholder `Makefile` / `Dockerfile`, and complete the [Implementation Checklist](IMPLEMENTATION-CHECKLIST.md).
-5. Configure and verify repository administration controls from an authenticated GitHub admin identity:
+ZPilot is an engineering orchestrator, not a general-purpose deployment agent. It does not deploy infrastructure, rotate credentials, modify repository settings, approve its own pull requests, bypass branch protection, force-push, rewrite history, or delete operator data.
 
-   ```bash
-   gh variable set INDEPENDENT_REVIEWER --repo my-org/my-service --body reviewer-login
-   python3 scripts/github_admin.py --repo my-org/my-service --apply
-   ```
+It does not silently install dependencies. It runs only discovered, available validation commands and explicit package scripts. Missing adapters and prerequisites must remain visible as unverified or blocked.
 
-6. Add stack-specific CI, security, release, deployment, backup/restore, rollback, monitoring, and operational evidence.
+## Requirements
 
-See the complete [startup guide](docs/startup.md).
+- Python 3.11+
+- Git
+- GitHub CLI (gh), authenticated for PR delivery
+- OpenCode CLI for AI-assisted repair
+- Gitleaks for the pre-commit secret gate
 
-## Included
+Discovery requires only Python and Git. Execution requires the integrations above and permission to push a feature branch and create/read/merge a PR. GitHub branch protection and required approvals remain authoritative.
 
-- Issue and pull request templates
-- CODEOWNERS and governance guidance
-- Security and support policies
-- CI repository-baseline validation
-- CodeQL security scanning
-- Dependency Review
-- Dependabot configuration
-- Immutable SHA pinning for baseline GitHub Actions
-- Release guidance and release-note configuration
-- Repository structure and local Markdown-link validation
-- GitHub administration automation with read-back verification
-- Conventional commit / PR guidance
-- Documentation, ADR, changelog, and roadmap structure
-- Environment example
-- Docker and Makefile placeholders
-- Cloudflare/Terraform ownership contract
-- Cross-agent ZEAZ engineering execution layer
-- Reusable skill/catalog structure
-- Opt-in safe weekly template-update PRs for generated repositories
+## Quick start
 
-## Repository administration gate
+    python zpilot.py --version
+    python zpilot.py --discover-only --json
+    python zpilot.py
 
-`scripts/github_admin.py` is dry-run by default.
+The default mode is read-only discovery. Execution is explicit:
 
-Set `INDEPENDENT_REVIEWER` to a valid GitHub login that is independent of the pull request author. The workflow's `verify-independent-approval` job checks that the latest review from this account approves the exact current head; make this status check required in branch protection.
+    python zpilot.py --execute --task "Describe the requested repository change" --max-iterations 3 --timeout 900 --merge-method squash
 
-Apply and verify:
+Use --base when the checkout is detached or the intended base differs from the current branch. ZPilot waits up to 24 hours by default for CI and independent review; set --review-timeout to change the bounded wait.
 
-```bash
-gh variable set INDEPENDENT_REVIEWER --repo OWNER/REPO --body reviewer-login
-python3 scripts/github_admin.py --repo OWNER/REPO --apply
-```
+A dirty source checkout is rejected. Existing operator changes are never staged, reset, stashed, or overwritten. ZPilot performs agent work in a separate Git worktree and preserves that worktree for inspection when a gate fails.
 
-Verify without mutation:
+## Configuration
 
-```bash
-python3 scripts/github_admin.py --repo OWNER/REPO --verify
-```
+Copy .env.example to .env for local-only settings. The loader parses assignments as data; it never sources or evaluates shell code. Process environment variables take precedence.
 
-The helper is designed to enforce or verify:
+- ZPILOT_AGENT selects the compatible agent executable; default: opencode.
+- ZPILOT_REPORT selects the JSON run-report path; default: ~/.zpilot/last-run.json.
 
-- pull-request review before merge
-- CODEOWNERS review
-- stale-review dismissal
-- approval after the latest push
-- conversation resolution
-- strict required status checks
-- administrator enforcement
-- no force pushes
-- no protected-branch deletion
-- Dependabot vulnerability alerts/security fixes
-- private vulnerability reporting
-- secret scanning/push protection when available
-- read-only default Actions token permissions
-- Actions cannot approve pull requests
+Do not put credentials in .env or commit populated environment files. Authenticate GitHub CLI through its supported credential flow.
 
-Presence of this script is not evidence that a generated repository is configured. The effective settings must be read back successfully.
+## Supported discovery and validation
 
-See [GitHub repository administration gate](docs/ai/guides/github-repository-admin.md).
+Discovery recognizes Python, JavaScript/TypeScript, Go, Rust, Java/Maven, Java/Gradle, Kotlin, .NET, Ruby, PHP, Swift, Dart/Flutter, C/C++, Elixir, Scala, Julia, Terraform, Helm, Docker, Docker Compose, and Make.
 
-## AI engineering execution layer
+Validation is intentionally narrower than discovery. It runs a command only when the required toolchain and manifest or package script exist. Supported adapters include Python compile/unittest, package.json scripts, go test, cargo test, dotnet test, Maven/Gradle tests, Swift/Flutter tests, Terraform formatting/validation, Compose configuration, and Helm lint. It does not invent missing scripts or install dependencies.
 
-- [ZEAZ engineering execution framework](ZEAZ-INTRODUCTION.md)
-- [Repository agent contract](AGENTS.md)
-- [Claude Code instructions](CLAUDE.md)
-- [OpenCode instructions](OPENCODE.md)
-- [Reusable AI playbooks and prompts](docs/ai/README.md)
-- [ECC integration](docs/ai/guides/ecc-integration.md)
-- [ZEAZ skills catalog](skills/README.md)
+Monorepo discovery scans nested manifests while excluding common generated, cache, vendor, and dependency directories. Detection is not equivalent to validation coverage; adapter gaps must be disclosed.
 
-These files guide execution and evidence handling. They are not production-readiness evidence by themselves.
+## Architecture
 
-## DNS and public hostnames
+- zpilot.py — standard-library CLI, dotenv loader, discovery, adapter planning, bounded convergence, worktree lifecycle, secret gate, PR delivery, and report generation.
+- scripts/ — compatibility wrappers and repository administration utilities.
+- tests/ — unit tests for parsing, discovery, and adapter selection.
+- .github/workflows/ — cross-platform CI, CodeQL, dependency review, secret scanning, independent-review enforcement, read-only audit, and source release.
+- docs/ — architecture, development, operations, security, and release contracts.
+- ZEAZ-INTRODUCTION.md and zeaz.md — ecosystem operating policy and evidence semantics.
 
-Do not add duplicate Cloudflare/DNS ownership to a generated project. Public DNS and shared tunnel ingress must have one designated owning repository.
+## Security model
 
-See [Cloudflare and Terraform ownership](docs/cloudflare-terraform.md).
+- Read-only discovery is the default; mutation requires --execute.
+- Dirty source checkouts are rejected.
+- Agent edits are isolated in a dedicated Git worktree.
+- Subprocesses use argument arrays, shell disabled, and bounded timeouts.
+- High-privilege environment credentials are filtered from the agent process; GitHub CLI and Git credential configuration are isolated.
+- Task text, validation output, and reports are redacted for common credential patterns.
+- OpenCode's model-auth store remains accessible to the OpenCode process; use OS/container isolation for untrusted repositories.
+- Gitleaks must pass before commit/push.
+- Only a feature branch is pushed; protected base branches are never pushed directly.
+- PR checks must pass for the current exact head SHA.
+- Independent/human approval is mandatory before merge.
+- GitHub enforces branch protection; ZPilot never uses an admin bypass.
+- Remote merge and local fast-forward are separate completion gates.
 
-## Template limitations
+Repository administrators must configure required status checks, independent reviewers, branch protection/rulesets, secret scanning, and least-privilege Actions permissions. Workflow files alone do not prove effective repository settings.
 
-- Baseline CI validates template structure and bootstrap behavior; generated projects must add real application lint/build/test/security checks.
-- The included Dockerfile and application Makefile targets are placeholders and must not ship unchanged.
-- Shared infrastructure remains owned by the designated infrastructure repository.
-- `scripts/github_admin.py` requires an authenticated GitHub identity with repository Administration permission.
-- A green CI run proves only the checks that actually ran; it does not prove application production readiness.
-- Generated repositories must independently verify deployment, rollback, backup/restore, observability, security, capacity, and incident-response gates that apply to the real system.
+## Evidence and readiness
 
-## Repository structure
+Use the canonical states in ZEAZ-INTRODUCTION.md: VERIFIED, PARTIALLY VERIFIED, UNVERIFIED, BLOCKED, and NOT APPLICABLE. Missing tools, skipped checks, unavailable permissions, and missing runtime environments cannot silently become PASS.
 
-```text
-.github/
-  ISSUE_TEMPLATE/
-  workflows/
-  CODEOWNERS
-  PULL_REQUEST_TEMPLATE.md
-  dependabot.yml
-  release.yml
-docs/
-  adr/
-  ai/
-    guides/
-    playbooks/
-    prompts/
-  architecture.md
-  development.md
-  release.md
-  repository-rollout.md
-  startup.md
-scripts/
-  bootstrap.py
-  github_admin.py
-  validate_repo.py
-skills/
-components.d/
-plugins.d/
-AGENTS.md
-CLAUDE.md
-OPENCODE.md
-ZEAZ-INTRODUCTION.md
-ecc-install.json
-CHANGELOG.md
-CODE_OF_CONDUCT.md
-CONTRIBUTING.md
-GOVERNANCE.md
-IMPLEMENTATION-CHECKLIST.md
-LICENSE
-Makefile
-README.md
-ROADMAP.md
-SECURITY.md
-```
+A successful repository run is not proof that an application has been deployed or is production ready. Application readiness also requires environment-specific security, operations, recovery, capacity, observability, ownership, and incident-response evidence.
 
-## Principles
+## Development
 
-- Secure by default
-- Least privilege
-- Immutable/reproducible automation where practical
-- Small, reviewable pull requests
-- Documentation as part of delivery
-- Evidence-backed readiness claims
-- No weakening of security gates merely to make CI green
-- Explicit rollback/recovery practices
-- Repository-specific policy is preserved when rolling the baseline into existing projects
+    python -m compileall -q zpilot.py scripts tests
+    python -m unittest discover -s tests -v
+    python zpilot.py --discover-only --json
 
-## Rollout to existing repositories
+See docs/architecture.md, docs/development.md, docs/operations.md, docs/security.md, and docs/release.md.
 
-Do not bulk-copy this template over an established repository.
+## Governance
 
-Use the [repository rollout guide](docs/repository-rollout.md) to audit the target first and port only missing compatible controls.
+Read zeaz.md and AGENTS.md before changing this repository. Preserve ZEAZ governance, independent review, least-privilege workflows, and repository administration controls. See SECURITY.md for vulnerability reporting.
 
 ## License
 
-MIT. See `LICENSE`.
+MIT. See LICENSE.

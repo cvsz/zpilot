@@ -82,9 +82,10 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          reviews="$(gh api --paginate --slurp --jq 'add' "repos/$GH_REPO/pulls/$PR_NUMBER/reviews")"
+          reviews="$(gh api --paginate --slurp "repos/$GH_REPO/pulls/$PR_NUMBER/reviews")"
           if ! jq -e --arg reviewer "$REVIEWER" --arg sha "$HEAD_SHA" --arg author "$PR_AUTHOR" '
-            [ .[] | select((.user.login // "" | ascii_downcase) == ($reviewer | ascii_downcase)) ]
+            add
+            | [ .[] | select((.user.login // "" | ascii_downcase) == ($reviewer | ascii_downcase)) ]
             | sort_by(.submitted_at // "")
             | (last // {})
             | ((.user.login // "" | ascii_downcase) != ($author | ascii_downcase))

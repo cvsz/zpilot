@@ -1,51 +1,43 @@
-# Roadmap
-
-This template stays language-agnostic while providing production-grade **repository foundations**.
+# ZPilot Roadmap
 
 ## Foundation
 
-- [x] Repository documentation baseline
-- [x] Security and contribution policies
-- [x] Issue and pull request templates
-- [x] CI and security workflow baseline
-- [x] Dependabot configuration
-- [x] Release guidance and release-note configuration
-- [x] Docker and task-runner placeholders
-- [x] Architecture/development/release documentation structure
-- [x] Immutable SHA pinning for baseline GitHub Actions
-- [x] Repository structure and local Markdown-link validation
-- [x] GitHub administration apply/verify automation
-- [x] Protected-default-branch policy baseline
-- [x] ZEAZ cross-agent execution framework
-- [x] Reusable AI guides/playbooks/prompts
-- [x] Discovery-first skills/component/plugin catalog scaffold
-- [x] Safe rollout guidance for existing repositories
+- [x] Cross-platform Python CLI foundation
+- [x] Safe dotenv parsing with process-environment precedence
+- [x] Repository and monorepo manifest discovery
+- [x] Git state, instructions, workflow, and toolchain inventory
+- [x] Read-only discovery mode and JSON output
+- [x] Stack-aware validation adapter selection
+- [x] Isolated worktree execution
+- [x] Bounded convergence and no-progress detection
+- [x] OpenCode repair adapter with independent revalidation
+- [x] Gitleaks completion gate
+- [x] Feature branch and pull-request delivery
+- [x] Exact-head CI and independent-review gate
+- [x] Normal GitHub merge and local fast-forward semantics
+- [x] JSON execution report
+- [x] Cross-platform CI baseline
 
-## Reusable first-project startup
+## Hardening
 
-- [x] Identity bootstrap with dry-run, explicit apply, and idempotence
-- [x] Safe ownership/security issue-link replacement
-- [x] Optional project profiles and adoption guide
-- [x] Bootstrap tests in baseline CI
-- [x] Repository administration verification helper
-- [ ] Validate production-capable per-stack adapters in generated repositories
-- [ ] Add end-to-end fixture verification for each adopted stack
+- [ ] Verify end-to-end execution on Ubuntu, Windows, and macOS with isolated GitHub test repositories
+- [ ] Add integration tests for GitHub CLI output/version compatibility
+- [ ] Add adapter contract tests and explicit unavailable-state reporting
+- [ ] Add monorepo workspace graph and per-package execution
+- [ ] Add process-tree cancellation and graceful timeout handling on Windows
+- [ ] Add configurable sandbox/container execution profiles
+- [ ] Add SARIF aggregation and signed run evidence
+- [ ] Add optional SBOM/provenance generation
+- [ ] Add branch-ruleset read-back integration where API permissions permit
+- [ ] Add resumable run state and idempotency for interrupted delivery
+- [ ] Add benchmark fixtures for representative repositories
 
-## Future optional modules
+## Non-goals
 
-- [ ] Language-specific starter packs
-- [ ] Infrastructure-as-code starter packs
-- [ ] Kubernetes and Helm starter packs
-- [ ] SBOM/provenance workflows
-- [ ] Release signing and artifact attestation
-- [ ] OpenSSF Scorecard workflow
-- [ ] Container vulnerability scanning
-- [ ] Documentation site starter
-- [ ] Monorepo profile
-- [ ] Service/API profile
-- [ ] Web application profile
-- [ ] Library/SDK profile
-- [ ] Machine-readable skill catalog/version index when real catalog scale justifies it
-- [ ] Benchmark/reference-set framework when there are real scenarios to measure
-
-Generated repositories should adopt only modules appropriate to their stack, threat model, operating environment, and compliance needs.
+- Bypassing required reviews or branch protection
+- Self-approval or fabricated independent review
+- Force push or history rewriting
+- Implicit dependency installation
+- Production deployment or infrastructure apply
+- Credential rotation or secrets-manager replacement
+- Claiming production readiness from green CI alone

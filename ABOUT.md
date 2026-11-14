@@ -1,59 +1,39 @@
-# About cvsz
+# About ZPilot
 
-`cvsz` is a builder focused on AI-first software, developer platforms, automation, infrastructure, and production-oriented systems.
+**ZPilot** is the ZeaZDev cross-platform autonomous repository engineering orchestrator.
 
-## Focus areas
+It coordinates repository discovery, architecture-aware validation, bounded AI-assisted repair, self-healing convergence, completion gates, GitHub pull-request delivery, and local branch synchronization.
 
-- AI coding tools and autonomous/agentic systems
-- AI application platforms and model/API integrations
-- developer platforms, APIs, SDKs, and internal tooling
-- platform engineering, infrastructure automation, CI/CD, and DevOps
-- security-aware architecture and repository hardening
-- workflow automation, bots, social, and commerce integrations
-- payment, wallet, ledger, and financial-system architecture
-- media, streaming, multimodal, speech, image, OCR, and search systems
-- gaming and interactive application infrastructure
-- OpenAPI tooling and service integration
+## Problem
 
-## Engineering philosophy
+Engineering automation is fragmented across shell scripts, coding agents, CI workflows, and manual GitHub operations. Those tools often assume one operating system or language, repeat work without bounds, overwrite pre-existing changes, or treat an agent's success message as proof.
 
-Projects should aim to be:
+ZPilot provides one controlled lifecycle and a consistent evidence model.
 
-- secure by default
-- automation-first
-- modular and reusable
-- easy to operate
-- observable
-- testable
-- documented
-- evidence-driven
-- friendly to incremental improvement
+## Core capabilities
 
-Security/quality failures should be fixed rather than bypassed. CI, infrastructure, documentation, recovery, repository controls, and operational readiness are treated as part of product engineering.
+- Cross-platform CLI on Linux, macOS, and Windows using Python 3.11+.
+- Nested repository and monorepo discovery across common language, build, infrastructure, and container manifests.
+- Safe dotenv parsing without shell evaluation; process environment has precedence.
+- Repository instruction discovery, including ZEAZ policy and tool-specific agent instructions.
+- Stack-aware validation planning without blind dependency installation.
+- Isolated Git worktree execution to protect the operator's original checkout.
+- Bounded convergence with per-command timeout, retry limit, and no-progress detection.
+- OpenCode repair adapter with independent post-repair validation.
+- Completion gate requiring validation, diff hygiene, and Gitleaks.
+- Feature-branch push and pull-request creation through GitHub CLI.
+- Exact-head CI and independent-review checks before normal GitHub merge.
+- Remote PR merge followed by local fast-forward synchronization.
+- Machine-readable discovery inventory and JSON execution report.
 
-## ztemplate direction
+## Non-goals and safety limits
 
-The template is intended to give new repositories disciplined foundations from the first commit:
+ZPilot is not a deployment platform, secrets manager, or general-purpose shell executor. It does not self-approve, bypass branch protection, force-push, rewrite history, mutate production infrastructure, rotate credentials, or clean operator worktrees. Human approval and GitHub policy remain authoritative.
 
-- governance and ownership
-- security policy
-- protected change flow
-- CI/security automation
-- dependency maintenance
-- release/recovery guidance
-- architecture documentation
-- AI-agent operating contracts
-- evidence-state semantics
-- repository administration verification
-- safe rollout guidance for existing projects
+## Technology
 
-The template itself does not claim that generated applications are production ready. Application readiness remains evidence-based and stack/environment specific.
+The orchestration core uses Python standard library APIs and Git. Optional integrations are GitHub CLI, OpenCode, and Gitleaks. Project-specific test/build tools are detected and invoked only when manifests, scripts, and executables are present.
 
-## GitHub
+## Readiness
 
-- Handle: `cvsz`
-- Repository namespace: `github.com/cvsz`
-
----
-
-This profile intentionally contains public-safe technical/project information only. Credentials, private account data, personal secrets, and sensitive identity information must not be added to a public repository template.
+The project targets production-oriented engineering workflows. Production readiness is evidence-backed, not a marketing claim. Each supported OS, adapter, GitHub policy configuration, and recovery path must be verified in CI or an appropriate environment before being declared verified.

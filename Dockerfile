@@ -1,23 +1,18 @@
-# Production-Grade Python Runtime Dockerfile
-FROM python:3.12-alpine AS runtime
+FROM python:3.12-alpine
 
-LABEL maintainer="maintainers@example.com"
-LABEL description="zTemplate Production-Grade Python Container Baseline"
+LABEL org.opencontainers.image.title="ZPilot discovery runtime"
+LABEL org.opencontainers.image.description="Read-only ZPilot repository discovery container"
+WORKDIR /workspace
 
-WORKDIR /app
+RUN apk add --no-cache git \
+    && addgroup -S zpilot \
+    && adduser -S -G zpilot -u 10001 zpilot
 
-# Copy necessary application modules, scripts, and tests
-COPY scripts/ /app/scripts/
-COPY tests/ /app/tests/
-COPY README.md ABOUT.md /app/
+COPY zpilot.py /opt/zpilot/zpilot.py
+USER 10001:10001
 
-# Create a secure non-root user and set permissions
-RUN adduser -D -u 1000 appuser && \
-    chown -R appuser:appuser /app
-
-USER appuser
-
+ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Default validation command
-CMD ["python3", "-m", "unittest", "discover", "-s", "tests", "-v"]
+ENTRYPOINT ["python", "/opt/zpilot/zpilot.py"]
+CMD ["--discover-only", "--json"]

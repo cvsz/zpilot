@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate ztemplate structure and local Markdown links."""
+"""Validate ZPilot repository structure and local Markdown links."""
 
 from __future__ import annotations
 
@@ -17,7 +17,9 @@ REQUIRED_PATHS = (
     "CLAUDE.md",
     "OPENCODE.md",
     "GEMINI.md",
+    "zeaz.md",
     "ZEAZ-INTRODUCTION.md",
+    "zpilot.py",
     "CONTRIBUTING.md",
     "SECURITY.md",
     "CODE_OF_CONDUCT.md",
@@ -26,16 +28,19 @@ REQUIRED_PATHS = (
     "IMPLEMENTATION-CHECKLIST.md",
     ".github/PULL_REQUEST_TEMPLATE.md",
     ".github/dependabot.yml",
-    "docs/ai/README.md",
-    "docs/ai/guides",
-    "docs/ai/playbooks",
-    "docs/ai/prompts",
-    "skills/zeaz-skill-finder/SKILL.md",
-    "components.d/zeaz-engineering.yml",
-    "plugins.d/zeaz-skills.yml",
-    "ecc-install.json",
+    ".github/workflows/ci.yml",
+    ".github/workflows/codeql.yml",
+    ".github/workflows/dependency-review.yml",
+    ".github/workflows/secret-scan.yml",
+    ".github/workflows/request-independent-review.yml",
+    ".github/workflows/zpilot-audit.yml",
+    "docs/architecture.md",
+    "docs/development.md",
+    "docs/operations.md",
+    "docs/security.md",
+    "docs/release.md",
+    "tests/test_zpilot.py",
     "scripts/github_admin.py",
-    "docs/ai/guides/github-repository-admin.md",
 )
 
 LINK_RE = re.compile(r"(?<!!)\[[^\]]*\]\(([^)]+)\)")
@@ -71,7 +76,7 @@ def validate_markdown_links() -> list[str]:
             target = normalize_link_target(raw)
             if not target:
                 continue
-            link_base = ROOT if md.relative_to(ROOT).as_posix() == "templates/project-readme.md" else md.parent
+            link_base = md.parent
             resolved = (link_base / target).resolve()
             try:
                 resolved.relative_to(ROOT.resolve())

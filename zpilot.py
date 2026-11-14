@@ -145,7 +145,7 @@ def validation_plan(root: Path, info: dict[str, Any]) -> list[tuple[str, tuple[s
         if sols: plan.append(("dotnet-test",("dotnet","test",str(sols[0]),"--no-restore"),root))
     if "Java/Maven" in stacks and shutil.which("mvn") and (root/"pom.xml").is_file():
         plan.append(("maven-test",("mvn","-B","-ntp","test"),root))
-    if ("Java/Gradle" in stacks or "Kotlin/Gradle" in stacks) and shutil.which("gradle") and any((root/name).is_file() for name in ("build.gradle","build.gradle.kts")):
+    if "Java/Gradle" in stacks and shutil.which("gradle") and (root/"build.gradle").is_file():
         plan.append(("gradle-test",("gradle","test","--no-daemon"),root))
     if "Ruby" in stacks and shutil.which("bundle") and (root/"Rakefile").is_file():
         plan.append(("ruby-test",("bundle","exec","rake","test"),root))
@@ -212,8 +212,13 @@ def fingerprint(root: Path) -> str:
 def secret_scan(root: Path) -> None:
     if not shutil.which("gitleaks"):
         raise RuntimeError("BLOCKED: gitleaks is required before commit/push; install it and retry.")
-    proc=command(("gitleaks","detect","--source",str(root),"--no-git","--redact","--exit-code","1"),root,300,False)
-    if proc.returncode: raise RuntimeError("Secret scan failed. Review locally; scanner output is not copied into the report.")
+    for args in (
+        ("gitleaks","git","--redact","--exit-code","1",str(root)),
+        ("gitleaks","dir","--redact","--exit-code","1",str(root)),
+    ):
+        proc=command(args,root,600,False)
+        if proc.returncode:
+            raise RuntimeError("Gitleaks history or working-tree scan failed. Review locally; scanner output is not copied into the report.")
 
 def repair(root: Path, task: str, failures: list[Result], timeout: int) -> None:
     agent=shutil.which(os.environ.get("ZPILOT_AGENT","opencode"))

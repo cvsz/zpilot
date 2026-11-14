@@ -41,7 +41,7 @@ jobs:
           fi
       - name: Validate workflow YAML syntax
         shell: bash
-        run: ruby -e 'require "yaml"; Dir.glob(".github/**/*.{yml,yaml}").each { |f| YAML.load_file(f); puts "ok #{f}" }'
+        run: ruby -e 'require "yaml"; Dir.glob(".github/**/*.{yml,yaml}").each { |f| YAML.load_file(f); puts f }'
   cross-platform:
     name: cross-platform
     strategy:

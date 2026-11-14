@@ -20,6 +20,8 @@ ZPilot is a cross-platform autonomous repository engineering orchestrator. Its s
 - Use isolated Git worktrees for agent modifications.
 - Use subprocess argument arrays and shell=False; validate inputs and bound timeouts.
 - Never commit credentials, private keys, populated .env files, personal data, or production data.
+- Keep privileged credentials out of agent subprocess environments; use isolated GitHub/Git configuration and redact command output.
+- A Git worktree is not a security sandbox; use a dedicated VM/container for untrusted repositories.
 - Do not install dependencies implicitly.
 - Do not bypass CI, secret scanning, independent review, branch protection, or release controls.
 - Never self-approve, force-push, rewrite history, or use an admin merge bypass.

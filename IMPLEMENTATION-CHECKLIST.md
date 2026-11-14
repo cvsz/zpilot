@@ -29,7 +29,10 @@ Checked boxes indicate implemented repository artifacts or controls, not end-to-
 - [x] Dirty source checkout rejection
 - [x] Isolated worktree for agent edits
 - [x] shell=False and bounded command timeouts
-- [x] Gitleaks completion gate
+- [x] Gitleaks source and worktree completion gates
+- [x] Filter privileged environment variables from agent subprocesses
+- [x] Isolate GitHub CLI and Git credential configuration for agent subprocesses
+- [x] Redact common credential patterns from task/output text
 - [x] No self-approval or admin bypass
 - [ ] Verify Gitleaks and GitHub secret scanning on protected test repositories
 - [ ] Threat-model review of agent sandbox and network egress

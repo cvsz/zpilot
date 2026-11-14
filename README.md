@@ -82,7 +82,9 @@ Monorepo discovery scans nested manifests while excluding common generated, cach
 - Dirty source checkouts are rejected.
 - Agent edits are isolated in a dedicated Git worktree.
 - Subprocesses use argument arrays, shell disabled, and bounded timeouts.
-- No credentials are passed in prompts or reports.
+- High-privilege environment credentials are filtered from the agent process; GitHub CLI and Git credential configuration are isolated.
+- Task text, validation output, and reports are redacted for common credential patterns.
+- OpenCode's model-auth store remains accessible to the OpenCode process; use OS/container isolation for untrusted repositories.
 - Gitleaks must pass before commit/push.
 - Only a feature branch is pushed; protected base branches are never pushed directly.
 - PR checks must pass for the current exact head SHA.

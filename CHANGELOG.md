@@ -9,6 +9,7 @@ All notable changes to ZPilot are documented here.
 - Added isolated worktree, convergence, completion, GitHub PR, and local fast-forward contracts.
 - Removed unsafe legacy bulk-deployment and direct-push automation paths.
 - Added cross-platform CI, runtime tests, and operational/security documentation.
+- Added filtered agent subprocess environments, isolated Git/GitHub credential configuration, and common credential redaction.
 
 ## 1.0.0 - 2026-11-14
 

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import tempfile
 import unittest
@@ -30,6 +31,36 @@ class DotenvTests(unittest.TestCase):
             path.write_text("VALUE='unterminated\n", encoding="utf-8")
             with self.assertRaises(ValueError):
                 zpilot.dotenv(path)
+
+
+class AgentEnvironmentTests(unittest.TestCase):
+    def test_agent_environment_drops_privileged_credentials(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            source = {
+                "PATH": os.environ.get("PATH", ""),
+                "HOME": directory,
+                "GH_TOKEN": "github-secret",
+                "GITHUB_TOKEN": "github-secret",
+                "OPENAI_API_KEY": "provider-secret",
+                "AWS_SECRET_ACCESS_KEY": "cloud-secret",
+                "SSH_AUTH_SOCK": "/tmp/agent.sock",
+            }
+            with patch.dict(os.environ, source, clear=True):
+                env = zpilot.agent_environment(Path(directory) / "isolated")
+            self.assertIn("PATH", env)
+            for key in ("GH_TOKEN", "GITHUB_TOKEN", "OPENAI_API_KEY", "AWS_SECRET_ACCESS_KEY", "SSH_AUTH_SOCK"):
+                self.assertNotIn(key, env)
+            self.assertTrue(Path(env["GH_CONFIG_DIR"]).is_dir())
+            self.assertTrue(Path(env["GIT_CONFIG_GLOBAL"]).is_file())
+            self.assertEqual(env["GIT_CONFIG_KEY_0"], "credential.helper")
+            self.assertEqual(env["GIT_CONFIG_VALUE_0"], "")
+
+    def test_output_redaction_masks_common_credentials(self) -> None:
+        raw = "GH_TOKEN=github-secret Authorization: Bearer bearer-secret OPENAI_API_KEY=provider-secret"
+        cleaned = zpilot.redact_output(raw)
+        for secret in ("github-secret", "bearer-secret", "provider-secret"):
+            self.assertNotIn(secret, cleaned)
+        self.assertIn("[REDACTED]", cleaned)
 
 
 class DiscoveryTests(unittest.TestCase):

@@ -18,9 +18,10 @@ Execution creates a dedicated worktree and feature branch. The source checkout m
 2. Confirm source branch and remote origin.
 3. Authenticate GitHub CLI with minimum permissions needed for feature-branch push and PR operations.
 4. Install OpenCode and Gitleaks.
-5. Require CI and independent review in branch protection/rulesets.
-6. Ensure the independent reviewer is not the PR author.
-7. Verify required status checks on the protected base branch.
+5. Run only against trusted repositories unless the agent is additionally isolated in a dedicated VM/container; a Git worktree is not a sandbox.
+6. Require CI and independent review in branch protection/rulesets.
+7. Ensure the independent reviewer is not the PR author.
+8. Verify required status checks on the protected base branch.
 
 ## Convergence policy
 

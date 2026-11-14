@@ -13,7 +13,10 @@ Protect operator work, credentials, repository integrity, GitHub governance, and
 - Subprocess calls use argument arrays and shell=False.
 - External commands have bounded timeouts.
 - Dotenv is parsed as inert data, not sourced.
-- Agent prompts and reports must not contain credentials.
+- High-privilege environment credentials are filtered from the agent process.
+- GitHub CLI configuration and Git global/system credential helpers are isolated for agent subprocesses.
+- Common credential patterns are redacted from task text, validation output, and reports.
+- OpenCode's own model-auth store remains accessible to the OpenCode process; this is not a complete sandbox.
 - Gitleaks must pass before commit/push.
 - Only feature branches are pushed.
 - Exact PR head SHA and base are rechecked before merge.
@@ -24,7 +27,7 @@ Protect operator work, credentials, repository integrity, GitHub governance, and
 
 Untrusted inputs include repository files, build scripts, package scripts, test code, workflow definitions, model output, issue/PR content, logs, and downloaded dependencies. Running repository validation can execute project code. Operators must use an isolated host/container/VM appropriate to the target repository's trust level.
 
-A worktree protects the operator's checked-out files from agent edits, but is not a security sandbox. Apply OS/container isolation, network egress controls, and credential scoping for untrusted repositories.
+A worktree protects the operator's checked-out files from agent edits, but is not a security sandbox. Agent environment filtering reduces exposure of ambient credentials, but OpenCode's own auth store and same-user files may remain accessible. Apply OS/container isolation, network egress controls, and dedicated low-privilege credentials for untrusted repositories.
 
 ## Secrets
 

@@ -35,7 +35,7 @@ Execution requires a clean source checkout. ZPilot fetches the selected base and
 
 ### Agent repair
 
-OpenCode receives the requested task and exact validation failures. The prompt prohibits push, merge, deployment, credential operations, destructive changes, and security-gate weakening. Agent output is untrusted and never accepted as proof.
+OpenCode receives the requested task and exact validation failures. The prompt prohibits push, merge, deployment, credential operations, destructive changes, and security-gate weakening. High-privilege environment variables are filtered; GitHub CLI config and Git global/system credential helpers are isolated. Common credential patterns are redacted from prompts and reports. Agent output is untrusted and never accepted as proof.
 
 ### Convergence controller
 

@@ -18,6 +18,8 @@ Execute an authorized repository task through discovery, isolated implementation
 - Default to read-only discovery.
 - Require explicit execution authorization and a concrete task.
 - Use a dedicated Git worktree; never edit the operator's source checkout.
+- Filter ambient credentials from the agent environment and isolate Git/GitHub CLI authentication configuration.
+- Redact task and command output before passing it to the agent or persisting it.
 - Run only existing project scripts or supported adapters.
 - Never install dependencies implicitly.
 - Bound every command, agent run, and convergence loop.

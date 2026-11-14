@@ -1,18 +1,28 @@
-## Summary
+## Objective
 
-Describe what changed and why.
+Describe the requested outcome and why the change is needed.
 
-## Validation
+## Scope and design
 
-- [ ] Tests added or updated where needed.
-- [ ] Formatting/linting completed.
-- [ ] Build completed where applicable.
-- [ ] Security impact reviewed.
-- [ ] Documentation updated where needed.
+- Components and contracts changed:
+- Alternatives considered:
+- Compatibility/migration impact:
 
-## Compatibility / risk
+## Validation evidence
 
-Describe compatibility impact, migration requirements, security considerations, and operational risk.
+- [ ] Unit tests added/updated and passed.
+- [ ] Cross-platform checks considered.
+- [ ] Repository validator passed.
+- [ ] Security/secret scanning passed.
+- [ ] Exact PR head SHA is identified.
+- [ ] Blocked, skipped, and not-applicable checks are explained.
+
+## Security and operations
+
+- [ ] No credentials, private keys, populated environment files, or sensitive data included.
+- [ ] No security gate or branch protection was bypassed.
+- [ ] Operational, observability, recovery, and rollback impact reviewed.
+- [ ] Agent-generated changes were independently reviewed.
 
 ## Rollback
 
@@ -20,7 +30,6 @@ Describe how this change can be reverted or mitigated if it causes problems.
 
 ## Checklist
 
-- [ ] This pull request is focused and reviewable.
-- [ ] No credentials, tokens, private keys, or sensitive data are included.
-- [ ] Security/quality gates were not weakened or bypassed.
-- [ ] `CHANGELOG.md` was updated for user-visible changes where appropriate.
+- [ ] Pull request is focused and reviewable.
+- [ ] Documentation and CHANGELOG.md are updated where appropriate.
+- [ ] Required checks and independent review remain enabled.

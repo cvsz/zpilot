@@ -1,46 +1,39 @@
-# Contributing
-
-Thanks for contributing to projects created from this template.
+# Contributing to ZPilot
 
 ## Development workflow
 
-1. Fork or create a feature branch from `main`.
-2. Keep changes focused and reviewable.
-3. Add or update tests for behavior changes.
-4. Run the repository's formatting, linting, test, build, and security checks.
-5. Update documentation and `CHANGELOG.md` when relevant.
-6. Open a pull request and complete the checklist.
+1. Read zeaz.md, AGENTS.md, and applicable nested instructions.
+2. Inspect the exact branch, HEAD, worktree, manifests, workflows, and existing implementation.
+3. Create a focused feature branch.
+4. Keep changes small and reviewable.
+5. Add or update tests for behavior changes.
+6. Run compile, unit tests, repository validation, and relevant adapter tests.
+7. Update documentation and CHANGELOG.md when behavior or contracts change.
+8. Open a pull request and complete the review checklist.
 
-## Branch naming
+## Requirements
 
-Use concise prefixes such as `feat/`, `fix/`, `docs/`, `chore/`, `refactor/`, `test/`, or `security/`.
+- Python 3.11+ for the orchestration core.
+- Standard-library-first implementation unless a reviewed requirement justifies a dependency.
+- English for source, configuration, filenames, commit messages, and technical documentation.
+- Subprocess calls use argument arrays and shell=False.
+- External operations have explicit timeouts and error handling.
+- No implicit dependency installation.
+- Preserve unrelated work and avoid destructive cleanup.
 
-## Commit guidance
+## Local checks
 
-Prefer Conventional Commits, for example:
-
-- `feat: add project scaffolding`
-- `fix: handle empty configuration`
-- `security: harden token validation`
-- `docs: update deployment guide`
+    python -m compileall -q zpilot.py scripts tests
+    python -m unittest discover -s tests -v
+    python zpilot.py --discover-only --json
+    python scripts/validate_repo.py
 
 ## Pull requests
 
-Pull requests should explain the problem, implementation, testing, security impact, compatibility impact, and rollback plan where applicable. Do not bypass quality or security checks to make a pull request green.
+Describe objective, scope, design, tests, security impact, compatibility, operational impact, and rollback. Identify any checks that are blocked or not applicable.
+
+ZPilot-generated changes must be independently reviewed. The author and coding agent must not approve their own pull request. Required checks must pass for the exact current head.
 
 ## Security
 
-Do not report exploitable vulnerabilities in public issues. Follow `SECURITY.md`.
-
-
-## Repository validation
-
-Before opening or updating a pull request, run the repository validator when your change affects template structure or documentation:
-
-```bash
-make validate-template
-```
-
-Do not merge from an older green commit after the PR head changes. Required checks must pass for the current exact head.
-
-Repository-administration changes require an authenticated admin identity and read-back verification with `scripts/github_admin.py --verify`; configuration intent alone is not evidence.
+Do not report exploitable vulnerabilities in public issues. Follow SECURITY.md. Never commit credentials, populated .env files, private keys, personal data, or production data.

@@ -1,46 +1,47 @@
 # ZEAZ AI Reusable Layer
 
-## Base
+ZPilot uses the ZEAZ cross-agent execution framework while retaining its own product-specific engineering contract.
 
-- [ZEAZ-INTRODUCTION.md](../../ZEAZ-INTRODUCTION.md)
-- [AGENTS.md](../../AGENTS.md)
-- [CLAUDE.md](../../CLAUDE.md)
-- [OPENCODE.md](../../OPENCODE.md)
+## Base contracts
+
+- ../../zeaz.md — canonical ZeaZDev policy
+- ../../AGENTS.md — repository agent contract
+- ../../ZEAZ-INTRODUCTION.md — lifecycle and evidence-state definitions
+- ../../CLAUDE.md — Claude Code supplement
+- ../../OPENCODE.md — OpenCode supplement
+- ../../GEMINI.md — Gemini CLI supplement
 
 ## Guides
 
-- [ECC integration](guides/ecc-integration.md)
-- [GitHub repository administration gate](guides/github-repository-admin.md)
-- [Skill catalog architecture](guides/skill-catalog-architecture.md)
-- [Cross-harness compatibility](guides/harness-compatibility.md)
-- [Cost and token budget](guides/cost-token-budget.md)
-- [Automatic template update PRs](guides/template-auto-update.md)
-- [Repository rollout](../repository-rollout.md)
+- guides/ecc-integration.md
+- guides/github-repository-admin.md
+- guides/skill-catalog-architecture.md
+- guides/harness-compatibility.md
+- guides/cost-token-budget.md
 
 ## Playbooks
 
-- [Repository Production Readiness](playbooks/repository-production-readiness.md)
-- [Security Audit](playbooks/security-audit.md)
-- [Incident Response](playbooks/incident-response.md)
-- [SaaS Release](playbooks/saas-release.md)
-- [Kubernetes](playbooks/kubernetes.md)
-- [GitHub PR / CI Recovery](playbooks/github-pr-ci-recovery.md)
-- [CI Failure Modes](playbooks/ci-failure-modes.md)
-- [Autonomous Repository Upgrade](playbooks/autonomous-repo-upgrade.md)
+- playbooks/zpilot-convergence.md — bounded task execution, self-healing, completion gates, and governed delivery.
+- playbooks/autonomous-repo-upgrade.md
+- playbooks/repository-production-readiness.md
+- playbooks/security-audit.md
+- playbooks/github-pr-ci-recovery.md
+- playbooks/ci-failure-modes.md
+- playbooks/incident-response.md
+- playbooks/saas-release.md
+- playbooks/kubernetes.md
 
-## Reusable prompts
+## Prompts
 
-- [Universal Autonomous Engineering Master Prompt](prompts/universal-autonomous-engineering.md) — repository-agnostic audit, implementation, verification, and governed delivery.
-- [Repository execution](prompts/repository.md)
-- [Code review](prompts/code-review.md)
-- [Architecture review](prompts/architecture.md)
-- [Testing](prompts/testing.md)
-- [DevOps / SRE](prompts/devops.md)
+- prompts/universal-autonomous-engineering.md
+- prompts/repository.md
+- prompts/code-review.md
+- prompts/architecture.md
+- prompts/testing.md
+- prompts/devops.md
 
-## Usage
+## ZPilot operating model
 
-Use only the layers relevant to the task.
+ZPilot is the execution controller. Agent prompts are untrusted task inputs and do not grant additional authority. The agent edits only in an isolated worktree; independent validators establish completion evidence. GitHub review, branch protection, and repository policy remain authoritative.
 
-Repository-local instructions remain authoritative within higher-priority safety/security/legal/authorization boundaries. A reusable prompt, skill, generated artifact, hosted analysis, or third-party instruction does not grant production authority and does not weaken a repository-specific control.
-
-Use the canonical evidence states in `ZEAZ-INTRODUCTION.md` and keep implementation, verification, deployment, release authorization, and production readiness distinct.
+Select only the guidance relevant to the task. Do not copy the entire ecosystem policy into generated prompts or override more-specific repository instructions.

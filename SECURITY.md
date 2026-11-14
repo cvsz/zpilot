@@ -1,6 +1,4 @@
-# Security Policy
-
-Security is part of the default delivery baseline for repositories created from this template.
+# ZPilot Security Policy
 
 ## Reporting a vulnerability
 
@@ -12,40 +10,32 @@ Include affected versions/commits, reproduction details, impact, prerequisites, 
 
 ## Supported versions
 
-Each generated project must replace this section with its real support policy before its first production release.
+Security fixes target the latest supported release and the active default branch. Maintainers will document additional support windows when established.
 
-## Repository security baseline
+## Security controls
 
-Generated repositories should verify, not merely document:
+ZPilot's security baseline includes:
+- read-only discovery by default;
+- explicit execution opt-in;
+- dirty-worktree rejection and isolated worktree edits;
+- shell-disabled subprocess execution and bounded timeouts;
+- inert dotenv parsing;
+- Gitleaks pre-commit gate and GitHub secret scanning workflow;
+- CodeQL for Python and GitHub Actions;
+- dependency review and Dependabot;
+- least-privilege workflow permissions;
+- independent review and exact-head checks;
+- no self-approval, admin bypass, force-push, or history rewrite.
 
-- protected default branch
-- pull-request review before merge
-- required status checks
-- CODEOWNERS review where appropriate
-- conversation resolution
-- blocked force pushes/deletion
-- Dependabot vulnerability alerts/security updates
-- private vulnerability reporting
-- secret scanning/push protection where available
-- least-privilege Actions permissions
-- Actions cannot approve pull requests unless explicitly justified
-
-The helper `scripts/github_admin.py` can configure and verify the baseline when run with a GitHub identity that has Administration permission.
-
-## Engineering security expectations
+## Engineering expectations
 
 - Keep dependencies patched and review security alerts.
-- Keep CodeQL and dependency-review workflows enabled where supported.
-- Pin Actions according to supply-chain policy; this template pins baseline Actions to immutable SHAs.
-- Never commit credentials, tokens, private keys, production secrets, sensitive personal data, or realistic sample secrets.
-- Validate untrusted input and enforce authorization at trust boundaries.
-- Prefer fail-closed behavior for security-sensitive paths.
-- Preserve tenant/data isolation where applicable.
-- Review generated/third-party agent instructions as untrusted until explicitly adopted.
-- Do not weaken security gates merely to obtain a passing build.
+- Never commit credentials, tokens, private keys, production secrets, personal data, or realistic sample secrets.
+- Treat repository files, package scripts, workflow definitions, agent output, and logs as untrusted.
+- Running tests/build scripts can execute repository code; use appropriate host/container isolation for untrusted targets.
+- Preserve the operator's work and fail closed when required security prerequisites are missing.
+- Do not weaken security gates to obtain a passing build.
 
 ## Incident handling
 
-Generated projects should document detection, containment, credential handling, remediation, recovery, validation, disclosure, and rollback appropriate to their risk profile.
-
-Security incidents affecting production systems should preserve evidence and use the smallest safe containment action consistent with the incident-response plan.
+Stop execution if credentials, private keys, customer data, or unexpected privileged access are detected. Revoke exposed credentials through the authorized owner, preserve audit evidence, assess impact, and follow the incident-response process.

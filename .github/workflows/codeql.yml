@@ -1,5 +1,4 @@
 name: CodeQL
-
 on:
   push:
     branches: [main]
@@ -7,23 +6,21 @@ on:
     branches: [main]
   schedule:
     - cron: '23 3 * * 1'
-
 permissions:
   contents: read
   security-events: write
-
 jobs:
   analyze:
-    name: Analyze GitHub Actions
+    name: Analyze GitHub Actions and Python
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-
+        with:
+          persist-credentials: false
       - name: Initialize CodeQL
         uses: github/codeql-action/init@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4
         with:
-          languages: actions
-
+          languages: actions, python
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4

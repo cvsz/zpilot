@@ -1,117 +1,71 @@
-# Implementation Checklist
+# ZPilot Production Engineering Checklist
 
-Use this checklist after creating a repository from `ztemplate`, or as an audit checklist when porting the baseline into an existing repository.
+Checked boxes indicate implemented repository artifacts or controls, not end-to-end production verification. Use ZEAZ-INTRODUCTION.md evidence states and attach exact CI/runtime evidence before closing release gates.
 
-## Bootstrap
+## Identity
+- [x] Project purpose and product boundaries documented
+- [ ] GitHub description, topics, and homepage reviewed by repository owner
+- [ ] CODEOWNERS identifies active maintainers
+- [ ] License and attribution reviewed
 
-- [ ] Create the new repository with **Use this template** when independent history is desired.
-- [ ] Preview and apply `scripts/bootstrap.py` with the actual name, owner, code owner, and description.
-- [ ] Review the changed identity/ownership files and commit `.ztemplate-initialized.json` as nonsecret setup evidence.
-- [ ] Run `make validate-template`.
-- [ ] Choose a project profile in `docs/profiles.md` and record non-goals.
-- [ ] Confirm README and ABOUT describe the real project.
+## Runtime and portability
+- [x] Python standard-library core
+- [x] Python 3.11+ requirement
+- [x] Windows/macOS/Linux CI matrix
+- [ ] End-to-end execution verified on each supported OS
+- [ ] Windows process-tree cancellation and worktree recovery tested
 
-## Repository identity
+## Discovery and adapters
+- [x] Nested manifest discovery
+- [x] Instruction and workflow inventory
+- [x] Toolchain availability inventory
+- [x] Existing package-script selection
+- [ ] Monorepo dependency graph and package-level orchestration
+- [ ] Adapter contract tests for every advertised ecosystem
 
-- [ ] Replace template identity/placeholders with the real project.
-- [ ] Confirm license choice and preserve required attribution.
-- [ ] Configure repository description, topics, homepage, visibility, and template status as applicable.
+## Safety and security
+- [x] Read-only default
+- [x] Explicit execution opt-in
+- [x] Dirty source checkout rejection
+- [x] Isolated worktree for agent edits
+- [x] shell=False and bounded command timeouts
+- [x] Gitleaks completion gate
+- [x] No self-approval or admin bypass
+- [ ] Verify Gitleaks and GitHub secret scanning on protected test repositories
+- [ ] Threat-model review of agent sandbox and network egress
+- [ ] Verify branch protection/rulesets through authorized admin read-back
 
-## Ownership and governance
+## Convergence and delivery
+- [x] Bounded iterations and no-progress detection
+- [x] Independent validation after agent repair
+- [x] Feature branch push and PR creation
+- [x] Exact-head check and review decision gate
+- [x] Normal GitHub merge request
+- [x] Remote merge read-back
+- [x] Local fast-forward synchronization
+- [ ] Integration tests for concurrent PR updates and branch advancement
+- [ ] Resumable interrupted-run handling
 
-- [ ] Update `.github/CODEOWNERS`.
-- [ ] Review `CONTRIBUTING.md`, `GOVERNANCE.md`, and `CODE_OF_CONDUCT.md`.
-- [ ] Run the GitHub administration helper in dry-run mode.
-- [ ] Apply repository administration controls with an authenticated admin identity.
-- [ ] Verify the effective controls:
+## GitHub requirements
+- [ ] Require repository-baseline CI
+- [ ] Require CodeQL and Dependency Review where applicable
+- [ ] Require verify-independent-approval
+- [ ] Require at least one independent approval and dismiss stale reviews
+- [ ] Require conversation resolution
+- [ ] Block force-push and protected-branch deletion
+- [ ] Enforce rules for administrators
+- [ ] Set Actions default token permissions to read-only
+- [ ] Enable Dependabot alerts/security updates
+- [ ] Enable secret scanning and push protection where available
+- [ ] Verify effective settings; workflow presence is not evidence of enforcement
 
-  ```bash
-  python3 scripts/github_admin.py --repo OWNER/REPO --verify
-  ```
-
-- [ ] Require pull-request review and CODEOWNERS approval.
-- [ ] Require passing status checks and conversation resolution.
-- [ ] Block force pushes and deletion of the protected default branch.
-- [ ] Document any break-glass role/process.
-
-## Security
-
-- [ ] Replace the generic support policy in `SECURITY.md`.
-- [ ] Configure private vulnerability reporting.
-- [ ] Enable Dependabot alerts and security updates.
-- [ ] Review CodeQL language support for the actual stack.
-- [ ] Keep dependency review enabled where supported.
-- [ ] Enable secret scanning and push protection where available.
-- [ ] Add stack-specific SAST, container, IaC, SBOM, provenance, and signing checks as appropriate.
-- [ ] Confirm Actions permissions follow least privilege.
-- [ ] Confirm fork PRs cannot access unsafe secrets or write tokens.
-- [ ] Pin third-party/first-party Actions according to project supply-chain policy.
-
-## Development
-
-- [ ] Select runtime/framework/package manager and supported versions.
-- [ ] Add formatter/linter/type-checker configuration as appropriate.
-- [ ] Add unit, integration, and end-to-end tests.
-- [ ] Replace placeholder Makefile targets with real commands.
-- [ ] Replace/remove the placeholder Dockerfile.
-- [ ] Populate `.env.example` with safe non-secret names only.
-- [ ] Document local setup and deterministic dependency installation.
-
-## Cloudflare and DNS
-
-- [ ] Read `docs/cloudflare-terraform.md`.
-- [ ] Keep public DNS/shared tunnel ownership in one designated infrastructure repository.
-- [ ] Confirm the service answers locally before requesting a public hostname.
-- [ ] Import existing records instead of recreating them.
-- [ ] Confirm infrastructure plans do not destroy unrelated resources.
-- [ ] Verify sibling/shared routes after changes.
-
-## CI/CD
-
-- [ ] Customize CI for the selected stack.
-- [ ] Pin runtime versions and define supported-version matrices.
-- [ ] Add real lint/test/build/package/security validation.
-- [ ] Configure artifact retention and provenance where needed.
-- [ ] Configure environments, approvals, and deployment protections.
-- [ ] Validate CI from both pull requests and the protected default branch.
-
-## Release
-
-- [ ] Choose an explicit versioning policy.
-- [ ] Maintain `CHANGELOG.md` and release notes.
-- [ ] Configure publishing only when required.
-- [ ] Publish from trusted workflows only.
-- [ ] Add artifact signing/attestation where appropriate.
-- [ ] Document known-good rollback.
-- [ ] Verify rollback on production-equivalent infrastructure when applicable.
-
-## Operations
-
-- [ ] Define health/readiness checks.
-- [ ] Configure structured logs, metrics, traces, and alert routing appropriate to the service.
-- [ ] Define backup scope, retention, encryption, and ownership.
-- [ ] Perform an isolated restore drill for stateful systems.
-- [ ] Define RPO/RTO where applicable.
-- [ ] Document incident response and escalation.
-- [ ] Perform load/capacity testing when performance or scale is a readiness gate.
-
-## Documentation
-
-- [ ] Complete `docs/architecture.md`.
-- [ ] Complete `docs/development.md`.
-- [ ] Complete `docs/release.md`.
-- [ ] Add ADRs for material decisions.
-- [ ] Document operational ownership and support expectations.
-
-## Final verification
-
-- [ ] Fresh clone works with documented setup.
-- [ ] Repository validator passes.
-- [ ] Required CI/security checks pass on the exact release head.
-- [ ] Protected-branch/admin verification succeeds.
-- [ ] No secrets/private data are committed.
-- [ ] Deployment is verified in the intended environment.
-- [ ] Backup/restore and rollback evidence exists where applicable.
-- [ ] Every applicable production-readiness gate is `VERIFIED`; any `NOT APPLICABLE` gate has an explicit reason.
-
-A green template CI run alone is never sufficient to claim application production readiness.
+## Operations and release
+- [x] JSON run report and failure worktree preservation
+- [x] Failure recovery guidance
+- [ ] Validate report permissions/retention on supported hosts
+- [ ] Exercise backup/recovery of long-running execution state
+- [ ] Establish maintainer/on-call ownership and support expectations
+- [ ] All required checks pass on exact release SHA
+- [ ] Independent and security review complete
+- [ ] Supported OS integration evidence attached
+- [ ] No production-readiness claim until every applicable gate is VERIFIED

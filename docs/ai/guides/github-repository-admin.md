@@ -42,8 +42,9 @@ The helper configures `main` to require:
 - conversation resolution;
 - strict/up-to-date required status checks;
 - `repository-baseline`;
-- `Analyze GitHub Actions`;
+- `Analyze GitHub Actions and Python`;
 - `dependency-review`;
+- `secret-scan`;
 - administrator enforcement;
 - no force pushes;
 - no branch deletion.

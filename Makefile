@@ -1,34 +1,24 @@
-SHELL := /bin/sh
+PYTHON ?= python3
 
-.PHONY: help validate-template setup format lint test build security ci
+.PHONY: help validate test lint discover ci
 
 help:
-	@printf '%s\n' 'Targets:' \
-		'  make validate-template - Run repository structure and link validation' \
-		'  make test              - Run python unit tests' \
-		'  make lint              - Run python syntax and structure checks' \
-		'  make build             - Run compilation check on scripts' \
-		'  make security          - Run security and validation checks' \
-		'  make ci                - Run full CI validation suite'
+	@printf '%s\n' 'make validate  - Validate repository structure and links' \
+		'make test      - Run unit tests' \
+		'make lint      - Compile Python sources' \
+		'make discover  - Run read-only repository discovery' \
+		'make ci        - Run all local checks'
 
-validate-template:
-	python3 scripts/validate_repo.py
-	python3 -m unittest discover -s tests -v
-
-format:
-	python3 -m py_compile scripts/*.py tests/*.py
-
-lint:
-	python3 -m py_compile scripts/*.py tests/*.py
-	python3 scripts/validate_repo.py
+validate:
+	$(PYTHON) scripts/validate_repo.py
 
 test:
-	python3 -m unittest discover -s tests -v
+	$(PYTHON) -m unittest discover -s tests -v
 
-build:
-	python3 -m py_compile scripts/*.py
+lint:
+	$(PYTHON) -m compileall -q zpilot.py scripts tests
 
-security:
-	python3 scripts/validate_repo.py
+discover:
+	$(PYTHON) zpilot.py --discover-only --json
 
-ci: validate-template lint test build security
+ci: validate lint test discover

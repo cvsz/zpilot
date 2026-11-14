@@ -1,0 +1,27 @@
+name: ZPilot Read-only Audit
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '13 2 * * 1'
+permissions:
+  contents: read
+concurrency:
+  group: zpilot-audit-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  audit:
+    name: zpilot-read-only-audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Compile
+        run: python3 -m compileall -q zpilot.py scripts tests
+      - name: Unit tests
+        run: python3 -m unittest discover -s tests -v
+      - name: Repository validation
+        run: python3 scripts/validate_repo.py
+      - name: Read-only discovery
+        run: python3 zpilot.py --discover-only --json

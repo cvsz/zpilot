@@ -1,43 +1,65 @@
 name: CI
-
 on:
   push:
     branches: [main]
   pull_request:
-
+  workflow_dispatch:
 permissions:
   contents: read
-
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
-
 jobs:
   repository-baseline:
+    name: repository-baseline
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-
+        with:
+          persist-credentials: false
+      - name: Validate Python runtime
+        run: python3 -c 'import sys; assert sys.version_info >= (3, 11), sys.version'
+      - name: Compile project and tests
+        run: python3 -m compileall -q zpilot.py scripts tests
+      - name: Run unit tests
+        run: python3 -m unittest discover -s tests -v
       - name: Validate repository structure and Markdown links
         run: python3 scripts/validate_repo.py
-
-      - name: Exercise startup bootstrap tests
-        run: python3 -m unittest discover -s tests -v
-
-      - name: Check for common secret file names
+      - name: Validate shell syntax
         shell: bash
         run: |
           set -euo pipefail
-          if git ls-files | grep -E '(^|/)(\.env|id_rsa|id_ed25519|.*\.pem|.*\.key)$' | grep -v '^\.env\.example$'; then
+          for file in scripts/*.sh; do bash -n "$file"; done
+      - name: Check tracked secret-bearing filenames
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git ls-files | grep -Ei '(^|/)(\.env($|\.)|id_rsa|id_ed25519|[^/]+\.(pem|p12|pfx|key)$)' | grep -v '^\.env\.example$'; then
             echo 'Potential secret-bearing file is tracked.'
             exit 1
           fi
-
-      - name: Validate rollout shell syntax
-        run: bash -n scripts/rollout-independent-review.sh
-
-      - name: Validate YAML syntax
+      - name: Validate workflow YAML syntax
+        shell: bash
+        run: ruby -e 'require "yaml"; Dir.glob(".github/**/*.{yml,yaml}").each { |f| YAML.load_file(f); puts "ok #{f}" }'
+  cross-platform:
+    name: cross-platform
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Run portable core tests and discovery
         shell: bash
         run: |
-          ruby -e 'require "yaml"; Dir.glob(".github/**/*.{yml,yaml}").each { |f| YAML.load_file(f); puts "ok #{f}" }'
+          set -euo pipefail
+          if [ "$RUNNER_OS" = "Windows" ]; then PY=python; else PY=python3; fi
+          "$PY" -c 'import sys; assert sys.version_info >= (3, 11), sys.version'
+          "$PY" -m compileall -q zpilot.py tests
+          "$PY" -m unittest discover -s tests -v
+          "$PY" zpilot.py --discover-only --json

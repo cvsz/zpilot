@@ -1,73 +1,27 @@
-# Project Profiles
+# Repository and Adapter Profiles
 
-Profiles are adoption guides, not production-ready starter applications. Every generated project must replace placeholders and verify its own runtime/security/operations.
+ZPilot discovers repository families from manifests and lockfiles. Discovery does not imply that every ecosystem has an automatic test adapter.
 
-## Common baseline for every profile
+## Discovery families
 
-- initialize identity with `scripts/bootstrap.py`
-- run `make validate-template`
-- configure real CODEOWNERS/security contacts
-- apply and verify GitHub administration controls
-- customize CI/security checks for the real stack
-- replace placeholder Dockerfile/Makefile application targets
-- complete architecture/development/release documentation
-- establish rollback and recovery evidence appropriate to the system
+- Python: pyproject.toml, requirements.txt, Pipfile, setup.py
+- JavaScript/TypeScript: package.json, pnpm workspace
+- Go: go.mod
+- Rust: Cargo.toml
+- Java/Kotlin: Maven and Gradle manifests
+- .NET: solution and project files
+- Ruby: Gemfile
+- PHP: composer.json
+- Swift: Package.swift
+- Dart/Flutter: pubspec.yaml
+- C/C++: CMakeLists.txt
+- Elixir, Scala, Julia
+- Terraform, Helm, Docker, Docker Compose, Make
 
-## Service / API
+## Adapter policy
 
-Add:
+An adapter runs only when its executable, manifest, and declared project command are available. ZPilot does not invent package scripts or silently install dependencies.
 
-- runtime/package-manager pinning
-- unit/integration/API contract tests
-- authentication/authorization tests
-- database/migration handling
-- container/build validation
-- health/readiness endpoints
-- deployment/rollback strategy
-- logs/metrics/traces and alerting
-- backup/restore if stateful
+Unsupported stacks and missing tools remain explicit coverage gaps. Add an adapter only with a documented command contract, bounded timeout, error semantics, fixture tests, and platform compatibility evidence.
 
-## Web application
-
-Add:
-
-- frontend build/lint/typecheck/test
-- browser/E2E coverage for critical paths
-- accessibility checks where applicable
-- security headers/session/CSRF controls
-- asset/build provenance as appropriate
-- real backend/API integration verification
-- deployment/rollback and monitoring
-
-## Library / SDK
-
-Add:
-
-- supported runtime matrix
-- API/compatibility tests
-- packaging validation
-- release provenance/signing if required
-- versioning/deprecation policy
-
-## Monorepo
-
-Add:
-
-- workspace-aware change detection
-- package/app ownership boundaries
-- dependency graph validation
-- consistent release/version policy
-- scoped CI without hiding required cross-package integration tests
-
-## Infrastructure / platform
-
-Add:
-
-- IaC formatting/validation/plan checks
-- explicit state/ownership boundaries
-- least-privilege deployment credentials
-- change approval/environment protection
-- rollback/failover/recovery procedures
-- drift detection and observability
-
-Choose the smallest profile that matches the product. Do not add modules merely for checklist completeness.
+See docs/architecture.md and ROADMAP.md.

@@ -1,0 +1,41 @@
+# ZPilot Security Model
+
+## Objectives
+
+Protect operator work, credentials, repository integrity, GitHub governance, and completion evidence.
+
+## Controls
+
+- Read-only discovery is the default.
+- Explicit --execute is required for mutation.
+- Dirty source checkouts are rejected.
+- Agent modifications run in a separate Git worktree.
+- Subprocess calls use argument arrays and shell=False.
+- External commands have bounded timeouts.
+- Dotenv is parsed as inert data, not sourced.
+- Agent prompts and reports must not contain credentials.
+- Gitleaks must pass before commit/push.
+- Only feature branches are pushed.
+- Exact PR head SHA and base are rechecked before merge.
+- Human/independent review is mandatory.
+- GitHub branch protections are never bypassed.
+
+## Threat model
+
+Untrusted inputs include repository files, build scripts, package scripts, test code, workflow definitions, model output, issue/PR content, logs, and downloaded dependencies. Running repository validation can execute project code. Operators must use an isolated host/container/VM appropriate to the target repository's trust level.
+
+A worktree protects the operator's checked-out files from agent edits, but is not a security sandbox. Apply OS/container isolation, network egress controls, and credential scoping for untrusted repositories.
+
+## Secrets
+
+Never embed credentials in source, prompts, reports, test fixtures, or workflow output. Use GitHub CLI's supported authentication flow. Do not expose scanner output in public PRs. Rotate credentials that were committed or logged.
+
+## Residual risks
+
+- A compromised local agent or repository build script may attempt actions permitted by the host.
+- Gitleaks can have false positives and false negatives.
+- GitHub ruleset and branch-protection configuration must be verified on the repository.
+- Merge and CI state can change concurrently; GitHub remains authoritative at merge time.
+- Current adapters do not provide full SAST, DAST, IaC, runtime, or production-environment assurance.
+
+Report vulnerabilities privately using SECURITY.md.

@@ -1,111 +1,39 @@
-# Start a project from ztemplate
+# Start Using ZPilot
 
-This repository is a language-agnostic governance/tooling baseline, not a deployable product.
+## Requirements
 
-Use GitHub **Use this template** when independent history is desired, clone the generated repository, and work through a feature branch.
+Install Python 3.11+, Git, and (for execution) GitHub CLI, OpenCode, and Gitleaks.
 
-## 1. Initialize project identity
+## Clone and inspect
 
-Requires Python 3.10+ and Git.
+    git clone https://github.com/cvsz/zpilot.git
+    cd zpilot
+    python zpilot.py --version
+    python zpilot.py --discover-only --json
 
-Preview:
+Discovery is read-only and requires no GitHub authentication.
 
-```bash
-python3 scripts/bootstrap.py --name my-service --owner my-org --codeowner my-org/maintainers --description 'Describe the product'
-```
+## Configure integrations
 
-Apply:
+Authenticate GitHub CLI using its supported login flow. Install OpenCode and Gitleaks. Copy .env.example to .env only if you need to select an alternate agent executable or report path.
 
-```bash
-python3 scripts/bootstrap.py --name my-service --owner my-org --codeowner my-org/maintainers --description 'Describe the product' --apply
-```
+Do not put secrets in .env. Process environment takes precedence.
 
-Review `git diff` and commit the generated identity marker only after confirming the resulting project metadata and ownership.
+## Execute a task
 
-## 2. Validate the inherited baseline
+Start from a clean source checkout:
 
-```bash
-make validate-template
-```
+    python zpilot.py --execute --task "Describe the engineering objective" --max-iterations 3 --timeout 900 --merge-method squash
 
-This validates repository structure, local Markdown links, and bootstrap behavior. Application-specific Makefile targets intentionally fail until replaced.
+ZPilot creates an isolated worktree and feature branch, implements the task, runs supported validation, performs bounded repair, scans secrets, opens a PR, waits for CI and independent review, requests a normal merge, then fast-forwards the local base branch.
 
-## 3. Configure repository administration
+## Verify operations
 
-The inherited script is dry-run by default:
+Read docs/operations.md and IMPLEMENTATION-CHECKLIST.md. Configure branch protection and independent reviewers in GitHub. Workflow files alone do not enforce repository settings.
 
-```bash
-python3 scripts/github_admin.py --repo my-org/my-service
-```
+## Container discovery
 
-Apply and read back effective settings:
+    docker build -t zpilot:local .
+    docker run --rm -v "$PWD:/workspace:ro" zpilot:local
 
-```bash
-gh variable set INDEPENDENT_REVIEWER --repo my-org/my-service --body reviewer-login
-python3 scripts/github_admin.py --repo my-org/my-service --apply
-```
-
-Later verification:
-
-```bash
-python3 scripts/github_admin.py --repo my-org/my-service --verify
-```
-
-This step requires an authenticated `gh` identity with repository Administration permission.
-
-Before applying, set `INDEPENDENT_REVIEWER` to a valid GitHub login that is not the pull request author. The script requires the `verify-independent-approval` status check and verifies that the variable exists. Require that check in branch protection; a workflow job alone does not enforce a merge gate.
-
-Do not treat the presence of the script as proof that branch/security settings are enabled.
-
-## 4. Make project-specific decisions
-
-- choose language/runtime/framework/package manager and supported versions
-- review licensing and attribution
-- replace the placeholder Dockerfile and Makefile application commands
-- set real maintainers/CODEOWNERS
-- replace the generic security support policy
-- define authentication/authorization and data-retention requirements
-- define secrets, environments, release policy, and deployment protections
-- add stack-specific CI/security checks
-- choose backup/recovery/rollback requirements
-- define observability and incident ownership
-
-See [profiles](profiles.md) and the [implementation checklist](../IMPLEMENTATION-CHECKLIST.md).
-
-## 5. Development baseline
-
-Copy `.env.example` to a local ignored `.env`. Add real code, tests, build tooling, security checks, and deterministic dependency installation.
-
-Do not remove inherited security checks merely to simplify CI.
-
-## 6. Operations and release evidence
-
-Complete:
-
-- [architecture](architecture.md)
-- [development](development.md)
-- [release](release.md)
-- [implementation checklist](../IMPLEMENTATION-CHECKLIST.md)
-
-For an application intended for production, establish environment-appropriate evidence for applicable gates such as:
-
-- deployment verification
-- authenticated health/readiness checks
-- structured logs/metrics/traces
-- alert routing
-- backup and isolated restore
-- rollback to a known-good build
-- RPO/RTO
-- load/capacity validation
-- security response contacts
-- incident/runbook procedures
-
-Green repository CI is not proof of application production readiness.
-
-## 7. Public hostnames
-
-Follow the [central Cloudflare/DNS ownership contract](cloudflare-terraform.md). Never introduce duplicate ownership of public DNS or a shared tunnel from an application repository when a designated infrastructure repository already owns it.
-
-## 8. Existing repositories
-
-When adopting this baseline into an established project, do not copy the template wholesale. Follow the [repository rollout guide](repository-rollout.md) and preserve repository-specific architecture, policy, tests, and operational contracts.
+The container is read-only discovery only. It does not include GitHub CLI, OpenCode, or Gitleaks and cannot execute repair or PR delivery.

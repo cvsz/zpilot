@@ -21,6 +21,9 @@ class IndependentReviewWorkflowTests(unittest.TestCase):
         self.assertIn('.state == "APPROVED"', WORKFLOW)
         self.assertIn(".commit_id == $sha", WORKFLOW)
         self.assertIn("PR_AUTHOR", WORKFLOW)
+        self.assertIn("gh api --paginate --slurp", WORKFLOW)
+        self.assertIn("jq -e", WORKFLOW)
+        self.assertNotIn("--slurp --jq", WORKFLOW)
         self.assertNotIn("policedbc", WORKFLOW)
         self.assertNotIn("actions/checkout", WORKFLOW)
 

@@ -66,3 +66,6 @@ A successful script run is operational evidence only when the final verification
 Do not close the production-readiness gate from the presence of this script alone.
 
 If GitHub does not expose a requested security feature for the repository plan or ownership model, classify that control according to `ZEAZ-INTRODUCTION.md` rather than silently treating it as enabled.
+
+
+The `INDEPENDENT_REVIEWER` repository variable must identify an active repository collaborator who is not the pull request author. GitHub rejects review requests to non-collaborators; do not use a placeholder login.
